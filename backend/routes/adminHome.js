@@ -82,16 +82,15 @@ router.get('/analytics', async (req, res) => {
   }
 });
 
-// backend/routes/adminHome.js
-
 // Add a new employee
 router.post('/employees', async (req, res) => {
   const { employee_id, first_name, last_name, role, email, phone_number, hire_date, salary } = req.body;
   try {
-    await pool.query(`
-      INSERT INTO employees (employee_id, first_name, last_name, role, email, phone_number, hire_date, salary)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)/
-    `, [employee_id, first_name, last_name, role, email, phone_number, hire_date, salary]);
+    await pool.query(
+      `INSERT INTO employees (employee_id, first_name, last_name, role, email, phone_number, hire_date, salary)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [employee_id, first_name, last_name, role, email, phone_number, hire_date, salary]
+    );
     res.status(201).json({ message: 'Employee added successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -100,13 +99,11 @@ router.post('/employees', async (req, res) => {
 
 // Add a new warehouse
 router.post('/warehouses', async (req, res) => {
-  const {warehouse_id, capacity, rent, manager_id } = req.body;
-  
+  const { warehouse_id, capacity, rent, manager_id } = req.body;
   // Input validation
   if (!Number.isInteger(capacity) || !Number.isInteger(manager_id) || typeof rent !== 'number') {
     return res.status(400).json({ error: 'Invalid input types' });
   }
-
   try {
     await pool.query(
       `INSERT INTO warehouses (warehouse_id, capacity, rent, manager_id) VALUES (?, ?, ?, ?)`,
@@ -115,7 +112,7 @@ router.post('/warehouses', async (req, res) => {
     res.status(201).json({ message: 'Warehouse added successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: `Internal server error ${error}`  });
+    res.status(500).json({ error: `Internal server error ${error}` });
   }
 });
 

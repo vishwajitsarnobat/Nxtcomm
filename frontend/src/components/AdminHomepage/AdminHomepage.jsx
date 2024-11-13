@@ -38,7 +38,7 @@ const AdminHomepage = () => {
           fetch('http://localhost:5000/api/admin-home/warehouses'),
           fetch('http://localhost:5000/api/admin-home/analytics')
         ]);
-        
+
         const [employeesData, warehousesData, analyticsData] = await Promise.all([
           employeesRes.json(),
           warehousesRes.json(),
@@ -60,7 +60,16 @@ const AdminHomepage = () => {
       await fetch('http://localhost:5000/api/admin-home/employees', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newEmployee)
+        body: JSON.stringify({
+          employee_id: newEmployee.employee_id,
+          first_name: newEmployee.first_name,
+          last_name: newEmployee.last_name,
+          role: newEmployee.role,
+          email: newEmployee.email,
+          phone_number: newEmployee.phone_number,
+          hire_date: newEmployee.hire_date,
+          salary: parseFloat(newEmployee.salary),
+        }),
       });
       setIsEmployeeModalOpen(false);
       setNewEmployee({
@@ -71,26 +80,29 @@ const AdminHomepage = () => {
         email: '',
         phone_number: '',
         hire_date: '',
-        salary: ''
+        salary: '',
       });
-      // Re-fetch the employees to update the list
       const res = await fetch('http://localhost:5000/api/admin-home/employees');
       setEmployees(await res.json());
     } catch (error) {
       console.error('Error adding employee:', error);
     }
   };
-
+  
   const handleAddWarehouse = async () => {
     try {
       await fetch('http://localhost:5000/api/admin-home/warehouses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newWarehouse)
+        body: JSON.stringify({
+          warehouse_id: newWarehouse.warehouse_id,
+          capacity: parseInt(newWarehouse.capacity),
+          rent: parseFloat(newWarehouse.rent),
+          manager_id: parseInt(newWarehouse.managerId),
+        }),
       });
       setIsWarehouseModalOpen(false);
-      setNewWarehouse({ capacity: '', rent: '', managerId: '' });
-      // Re-fetch the warehouses to update the list
+      setNewWarehouse({ warehouse_id: '', capacity: '', rent: '', managerId: '' });
       const res = await fetch('http://localhost:5000/api/admin-home/warehouses');
       setWarehouses(await res.json());
     } catch (error) {
@@ -109,15 +121,15 @@ const AdminHomepage = () => {
           </div>
           <p className="text-2xl font-bold">{employees.length}</p>
         </div>
-        
+
         <div className="bg-green-50 p-6 rounded-lg">
           <div className="flex items-center mb-4">
-          <WarehouseIcon className="w-8 h-8 text-green-600" />
+            <WarehouseIcon className="w-8 h-8 text-green-600" />
             <h3 className="ml-2 text-lg font-bold">Warehouses</h3>
           </div>
           <p className="text-2xl font-bold">{warehouses.length}</p>
         </div>
-        
+
         <div className="bg-purple-50 p-6 rounded-lg">
           <div className="flex items-center mb-4">
             <TrendingUpIcon className="w-8 h-8 text-purple-600" />
@@ -197,7 +209,7 @@ const AdminHomepage = () => {
       </section>
 
 
-              
+
       {/* Warehouse Management */}
       <section>
         <h2 className="text-2xl font-bold mb-4">Warehouse Management</h2>
@@ -223,7 +235,7 @@ const AdminHomepage = () => {
           ))}
         </div>
       </section>
-      
+
       {/* Employee Modal */}
       {isEmployeeModalOpen && (
         <div className="modal">
@@ -239,17 +251,17 @@ const AdminHomepage = () => {
           <input
             type="text"
             placeholder="First Name"
-            value={newEmployee.firstName}
+            value={newEmployee.first_name}
             onChange={(e) =>
-              setNewEmployee({ ...newEmployee, firstName: e.target.value })
+              setNewEmployee({ ...newEmployee, first_name: e.target.value })
             }
           />
           <input
             type="text"
             placeholder="Last Name"
-            value={newEmployee.lastName}
+            value={newEmployee.last_name}
             onChange={(e) =>
-              setNewEmployee({ ...newEmployee, lastName: e.target.value })
+              setNewEmployee({ ...newEmployee, last_name: e.target.value })
             }
           />
           <input
@@ -271,17 +283,17 @@ const AdminHomepage = () => {
           <input
             type="tel"
             placeholder="Phone Number"
-            value={newEmployee.phoneNumber}
+            value={newEmployee.phone_number}
             onChange={(e) =>
-              setNewEmployee({ ...newEmployee, phoneNumber: e.target.value })
+              setNewEmployee({ ...newEmployee, phone_number: e.target.value })
             }
           />
           <input
             type="date"
             placeholder="Hire Date"
-            value={newEmployee.hireDate}
+            value={newEmployee.hire_date}
             onChange={(e) =>
-              setNewEmployee({ ...newEmployee, hireDate: e.target.value })
+              setNewEmployee({ ...newEmployee, hire_date: e.target.value })
             }
           />
           <input
@@ -301,6 +313,14 @@ const AdminHomepage = () => {
       {isWarehouseModalOpen && (
         <div className="modal">
           <h2>Add New Warehouse</h2>
+          <input
+            type="number"
+            placeholder="Warehouse ID"
+            value={newWarehouse.warehouse_id}
+            onChange={(e) =>
+              setNewWarehouse({ ...newWarehouse, warehouse_id: parseInt(e.target.value) })
+            }
+          />
           <input
             type="number"
             placeholder="Capacity"
