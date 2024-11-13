@@ -1,0 +1,146 @@
+CREATE DATABASE ecommerce_db;
+USE ecommerce_db;
+
+-- Creating customers table
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    phone_number VARCHAR(15),
+    registration_date DATE,
+    loyalty_points INT
+);
+
+-- Creating offers table
+CREATE TABLE offers (
+    offer_id INT PRIMARY KEY,
+    offer_title VARCHAR(100),
+    start_date DATE,
+    end_date DATE,
+    discount_value DECIMAL(5, 2)
+);
+
+-- Creating suppliers table
+CREATE TABLE suppliers (
+    supplier_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    phone_number VARCHAR(15)
+);
+
+-- Creating employees table
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    role VARCHAR(50),
+    email VARCHAR(100),
+    phone_number VARCHAR(15),
+    hire_date DATE,
+    salary DECIMAL(10, 2)
+);
+
+-- Creating products table
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    description VARCHAR(255),
+    rating DECIMAL(2, 1),
+    price DECIMAL(10, 2),
+    offer_id INT,
+    stock_quantity INT,
+    supplier_id INT,
+    FOREIGN KEY (offer_id) REFERENCES offers(offer_id),
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id)
+);
+
+-- Creating warehouses table
+CREATE TABLE warehouses (
+    warehouse_id INT PRIMARY KEY,
+    capacity INT,
+    rent DECIMAL(10, 2),
+    manager_id INT,
+    FOREIGN KEY (manager_id) REFERENCES employees(employee_id)
+);
+
+-- Creating reviews table
+CREATE TABLE reviews (
+    review_id INT PRIMARY KEY,
+    customer_id INT,
+    product_id INT,
+    rating DECIMAL(2, 1),
+    review_text TEXT,
+    review_date DATE,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+-- Creating orders table
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    delivery_date DATE,
+    total_amount DECIMAL(10, 2),
+    status VARCHAR(50),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+-- Creating transactions table
+CREATE TABLE transactions (
+    transaction_id INT PRIMARY KEY,
+    order_id INT,
+    transaction_date DATE,
+    amount DECIMAL(10, 2),
+    transaction_status VARCHAR(50),
+    payment_method VARCHAR(50),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+
+-- Inserting data into customers table
+INSERT INTO customers (customer_id, first_name, last_name, email, phone_number, registration_date, loyalty_points) VALUES
+(1, 'John', 'Doe', 'john.doe@example.com', '1234567890', '2023-01-15', 100),
+(2, 'Jane', 'Smith', 'jane.smith@example.com', '0987654321', '2023-02-20', 200);
+
+-- Inserting data into offers table
+INSERT INTO offers (offer_id, offer_title, start_date, end_date, discount_value) VALUES
+(1, 'New Year Discount', '2024-01-01', '2024-01-31', 15.00),
+(2, 'Summer Sale', '2024-06-01', '2024-06-30', 10.00);
+
+-- Inserting data into suppliers table
+INSERT INTO suppliers (supplier_id, first_name, last_name, email, phone_number) VALUES
+(1, 'Alice', 'Johnson', 'alice.j@example.com', '5551234567'),
+(2, 'Bob', 'Williams', 'bob.w@example.com', '5559876543');
+
+-- Inserting data into employees table
+INSERT INTO employees (employee_id, first_name, last_name, role, email, phone_number, hire_date, salary) VALUES
+(1, 'Emily', 'Brown', 'Manager', 'emily.brown@example.com', '5554443333', '2022-05-10', 55000.00),
+(2, 'Michael', 'Green', 'Sales Associate', 'michael.green@example.com', '5553334444', '2022-11-15', 35000.00);
+
+-- Inserting data into products table
+INSERT INTO products (product_id, name, description, rating, price, offer_id, stock_quantity, supplier_id) VALUES
+(1, 'Smartphone', 'Latest model smartphone with high-end specs.', 4.5, 699.99, 1, 50, 1),
+(2, 'Laptop', 'High-performance laptop for professionals.', 4.7, 1199.99, NULL, 30, 2),
+(3, 'Science Fiction Novel', 'A best-selling sci-fi novel.', 4.2, 15.99, 2, 100, 1);
+
+-- Inserting data into warehouses table
+INSERT INTO warehouses (warehouse_id, capacity, rent, manager_id) VALUES
+(1, 5000, 2000.00, 1),
+(2, 10000, 3500.00, 2);
+
+-- Inserting data into reviews table
+INSERT INTO reviews (review_id, customer_id, product_id, rating, review_text, review_date) VALUES
+(1, 1, 1, 5.0, 'Great smartphone with excellent features!', '2023-03-20'),
+(2, 2, 3, 4.0, 'Very interesting read!', '2023-04-15');
+
+-- Inserting data into orders table
+INSERT INTO orders (order_id, customer_id, order_date, delivery_date, total_amount, status) VALUES
+(1, 1, '2023-03-21', '2023-03-25', 699.99, 'Delivered'),
+(2, 2, '2023-04-16', '2023-04-20', 15.99, 'Delivered');
+
+-- Inserting data into transactions table
+INSERT INTO transactions (transaction_id, order_id, transaction_date, amount, transaction_status, payment_method) VALUES
+(1, 1, '2023-03-21', 699.99, 'Completed', 'Credit Card'),
+(2, 2, '2023-04-16', 15.99, 'Completed', 'Debit Card');
